@@ -1,0 +1,3 @@
+[submodule "lib/FastInterruptEncoder"]
+    path = lib/FastInterruptEncoder
+    url = https://github.com/levkovigor/FastInterruptEncoder.git
