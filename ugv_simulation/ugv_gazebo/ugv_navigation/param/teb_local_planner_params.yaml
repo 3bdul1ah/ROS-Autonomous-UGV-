@@ -1,0 +1,29 @@
+TebLocalPlannerROS:
+
+  # Trajectory Parameters
+  teb_autosize: True
+  dt_ref: 0.3
+  dt_hysteresis: 0.1
+
+  # Robot Configuration
+  max_vel_x: 1.8 #0.3  #0.4
+  max_vel_theta: 0.3 #0.4, 0.3
+  acc_lim_x: 1.0  #0.9
+  acc_lim_theta: 1.2 #1.8 #1.2  # 0.8, 1
+  min_turning_radius: 0.8 
+
+  # Goal Tolerance
+  xy_goal_tolerance: 0.3  #0.2
+  yaw_goal_tolerance: 1 #0.8 #0.6  #0.5
+  free_goal_vel: False
+
+  # Obstacles
+  min_obstacle_dist: 0.3  #0.2
+  inflation_dist: 0.4  #0.3
+  include_costmap_obstacles: True
+
+  # Optimization
+  no_inner_iterations: 5
+  no_outer_iterations: 4
+  optimization_activate: True
+  optimization_verbose: False

@@ -1,0 +1,18 @@
+obstacle_range: 1 #1.5 #3.0
+raytrace_range: 1.5 #2.0 #3.5
+
+robot_radius: 0.19 #0.17 #0.055  
+#robot_radius: ir_of_robot
+inflation_radius: 1 #1.8 #0.5 #1.8
+cost_scaling_factor: 3.0
+# map_type: costmap # remove Pre-Hydro parameter "static_type" unused since "plugins" is provided error as its dy in ros
+
+observation_sources: laser_scan_sensor 
+laser_scan_sensor: {sensor_frame: lidar_link  , data_type: LaserScan, topic: /lidar/scan, marking: true, clearing: true}
+
+recovery_behaviors:
+  - name: 'costmap_reset_conservative'
+    type: 'clear_costmap_recovery/ClearCostmapRecovery'
+costmap_reset_conservative:
+  reset_distance: 1.5 
+  layer_names: ["obstacle_layer"]

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Launch file for setting up the UGV simulation in Gazebo:
+1. Includes an empty Gazebo world with default settings
+2. Spawns the UGV model into the simulation
+3. Launches essential nodes for robot state and visualization
+
+Written by Abdullah Al-Shateri
+-->
+
+<launch>
+
+  <!-- ++++++++++++++++++ Include Gazebo World ++++++++++++++++++ -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find ugv_gazebo)/worlds/ugv_gazebo_1.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+  
+  <!-- ++++++++++++++++++ Load Robot Description ++++++++++++++++++ -->
+  <arg name="model" default="$(find ugv_description)/urdf/ugv_description.xacro" />
+  <param name="robot_description" command="$(find xacro)/xacro '$(arg model)'"/>
+
+  <!-- ++++++++++++++++++ Spawn UGV Model ++++++++++++++++++ -->
+  <node name="ugv_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
+    args="-urdf -x -0.55 -param robot_description -model ugv" />
+
+  <!-- ++++++++++++++++++ Joint State Publisher GUI ++++++++++++++++++ -->
+  <node name="joint_state_publisher" 
+        pkg="joint_state_publisher" 
+        type="joint_state_publisher" >
+    <param name="use_gui" value="false"/>
+  </node>
+  
+  <!-- ++++++++++++++++++ Robot State Publisher ++++++++++++++++++ -->
+  <node name="robot_state_publisher"
+        pkg="robot_state_publisher"
+        type="robot_state_publisher">
+  </node>
+
+  <!-- ++++++++++++++++++ Rviz Visualization ++++++++++++++++++ -->
+  <node name="rviz"
+        pkg="rviz"
+        type="rviz"
+        args="-d $(find ugv_gazebo)/rviz/ugv_gazebo.rviz"
+        required="false">
+  </node>
+
+  <!-- ++++++++++++++++++ LiDAR Configuration ++++++++++++++++++ -->
+  <node pkg="laser_filters" type="scan_to_scan_filter_chain"
+          name="laser_filter">
+        <rosparam command="load" file="$(find ugv_gazebo)/config/ugv_laser_filter_config.yaml" />
+        <remap from="scan" to="/lidar/scan" />
+      </node>
+
+</launch>

@@ -1,0 +1,384 @@
+<?xml version="1.0"?>
+<!--
+URDF file for a simple Unmanned Ground Vehicle (UGV):
+1. Body link with a red visual representation
+2. Four continuous wheels (front-left, front-right, back-left, back-right)
+3. RealSense camera mounted on the body link
+4. Lidar sensor mounted on the body link
+
+Written by Abdullah Al-Shateri
+-->
+
+<robot name="ugv" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<xacro:include filename="$(find ugv_gazebo)/urdf/ugv_gazebo.gazebo" /> 
+
+    <!-- ++++++++++++++++++ Body Link ++++++++++++++++++ -->
+
+ <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.0026167 0.00069134 0.081542"
+        rpy="0 0 0" />
+      <mass
+        value="2.8764" />
+      <inertia
+        ixx="0.0070102"
+        ixy="-3.1394E-06"
+        ixz="-2.2948E-07"
+        iyy="0.0047337"
+        iyz="7.6928E-07"
+        izz="0.011042" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://ugv_stm32_description/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="base_link_material">
+        <color
+          rgba="0.05 0.05 0.05 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://ugv_stm32_description/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="lidar_link">
+    <inertial>
+      <origin
+        xyz="-0.0003895 0.014987 -0.014606"
+        rpy="0 0 0" />
+      <mass
+        value="0.035082" />
+      <inertia
+        ixx="1.932E-05"
+        ixy="9.0089E-10"
+        ixz="-8.8789E-10"
+        iyy="1.9432E-05"
+        iyz="4.0704E-08"
+        izz="3.7019E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 -0.02"
+        rpy="3.1347 0 -1.5708" />
+      <geometry>
+        <mesh
+          filename="package://ugv_stm32_description/meshes/lidar_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0 0 0 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 -0.02"
+        rpy="3.1347 0 -1.5708" />
+      <geometry>
+        <mesh
+          filename="package://ugv_stm32_description/meshes/lidar_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="lidar_joint"
+    type="fixed">
+    <origin
+      xyz="-0.02 0 0.1523"
+      rpy="0.0 0 0.0" />
+    <parent
+      link="base_link" />
+    <child
+      link="lidar_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="realsense_link">
+    <inertial>
+      <origin
+        xyz="4.59283901156922E-05 -0.000140918346274069 -0.0129943249794181"
+        rpy="0.0 0 0.0" />
+      <mass
+        value="2.22840008128653" />
+      <inertia
+        ixx="0.000246394849613122"
+        ixy="1.24521625300331E-06"
+        ixz="7.30770065541246E-07"
+        iyy="0.00263788263789951"
+        iyz="-2.63315715533475E-06"
+        izz="0.0026532807626956" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="1.57 0 1.57" />
+      <geometry>
+        <mesh
+          filename="package://ugv_stm32_description/meshes/realsense_link.STL" />
+      </geometry>
+      <material
+        name="realsense_color">
+        <color
+          rgba="0.2 0.2 0.2 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="1.57 0 1.57" />
+      <geometry>
+        <mesh
+          filename="package://ugv_stm32_description/meshes/realsense_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="realsense_joint"
+    type="fixed">
+    <origin
+      xyz="0.166 0 0.1098"
+      rpy="0.0 0 0.0" />
+    <parent
+      link="base_link" />
+    <child
+      link="realsense_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+
+  <joint name="camera_optical_joint" type="fixed">
+    <origin xyz="0 0 0" rpy="-1.5708 0.0 -1.5708"/>
+    <parent link="realsense_link"/>
+    <child link="camera_frame_optical"/>
+    </joint>
+  <link name="camera_frame_optical"/>
+
+  <link
+    name="frontleft_wheel">
+    <inertial>
+      <origin
+        xyz="0.02232 -4.2739E-07 -2.1671E-10"
+        rpy="0 0 0" />
+      <mass
+        value="0.30698" />
+      <inertia
+        ixx="0.00090644"
+        ixy="-4.6007E-10"
+        ixz="-2.4986E-13"
+        iyy="0.00048196"
+        iyz="-1.7908E-12"
+        izz="0.00048196" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://ugv_stm32_description/meshes/frontleft_wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://ugv_stm32_description/meshes/frontleft_wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="frontleft_joint"
+    type="continuous">
+    <origin
+      xyz="0.10875 0.12569 0.0596"
+      rpy="1.5708 0 1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="frontleft_wheel" />
+    <axis
+      xyz="1 0 0" />
+  </joint>
+  <link
+    name="frontright_wheel">
+    <inertial>
+      <origin
+        xyz="0.0223197790305205 4.27307195981219E-07 1.1211999384475E-10"
+        rpy="0 0 0" />
+      <mass
+        value="0.306983658309065" />
+      <inertia
+        ixx="0.000906438609574271"
+        ixy="4.59822493069488E-10"
+        ixz="-3.29773611919204E-15"
+        iyy="0.000481963094381739"
+        iyz="-1.29354320823362E-12"
+        izz="0.000481963392879755" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://ugv_stm32_description/meshes/frontright_wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://ugv_stm32_description/meshes/frontright_wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="frontright_joint"
+    type="continuous">
+    <origin
+      xyz="0.10875 -0.12569 0.0596"
+      rpy="1.5708 0 -1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="frontright_wheel" />
+    <axis
+      xyz="-1 0 0" />
+  </joint>
+  <link
+    name="backleft_wheel">
+    <inertial>
+      <origin
+        xyz="0.0223197790372089 -4.27390142949957E-07 -1.04124348032641E-10"
+        rpy="0 0 0" />
+      <mass
+        value="0.306983658426845" />
+      <inertia
+        ixx="0.0009064386096105"
+        ixy="-4.60241090269607E-10"
+        ixz="2.56558826759962E-13"
+        iyy="0.000481963094847581"
+        iyz="-1.04154930003381E-12"
+        izz="0.000481963392375966" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://ugv_stm32_description/meshes/backleft_wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://ugv_stm32_description/meshes/backleft_wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="backleft_joint"
+    type="continuous">
+    <origin
+      xyz="-0.10875 0.12569 0.0596"
+      rpy="1.5708 0 1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="backleft_wheel" />
+    <axis
+      xyz="1 0 0" />
+  </joint>
+  <link
+    name="backright_wheel">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+            <mass
+        value="0.306983658426845" />
+      <inertia
+        ixx="0.0009064386096105"
+        ixy="-4.60241090269607E-10"
+        ixz="2.56558826759962E-13"
+        iyy="0.000481963094847581"
+        iyz="-1.04154930003381E-12"
+        izz="0.000481963392375966" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://ugv_stm32_description/meshes/backright_wheel.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://ugv_stm32_description/meshes/backright_wheel.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="backright_joint"
+    type="continuous">
+    <origin
+      xyz="-0.10875 -0.12569 0.0596"
+      rpy="-1.5708 0 -1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="backright_wheel" />
+    <axis
+      xyz="-1 0 0" />
+  </joint>
+
+</robot>

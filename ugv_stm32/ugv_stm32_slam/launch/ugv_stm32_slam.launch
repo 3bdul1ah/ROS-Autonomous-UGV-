@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!--
+Launch file for setting up UGV simulation in Gazebo.
+1. Loads the Gazebo world.
+2. Configures the UGV model.
+3. Starts GMapping SLAM and teleoperation nodes.
+
+Written by Abdullah Al-Shateri
+-->
+
+<launch>
+
+  <!-- ++++++++++++++++++ Gazebo World ++++++++++++++++++ -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find ugv_gazebo)/worlds/ugv_gazebo_1.world"/>
+  </include>
+
+  <!-- ++++++++++++++++++ UGV Description ++++++++++++++++++ -->
+  <include file="$(find ugv_stm32_description)/launch/ugv_stm32_description.launch"/>
+
+  
+  <!-- ++++++++++++++++++ GMapping SLAM ++++++++++++++++++ -->
+  <include file="$(find ugv_stm32_slam)/launch/ugv_stm32_gmapping.launch"/>
+  
+  <!-- ++++++++++++++++++ Teleoperation Node ++++++++++++++++++ -->
+  <include file="$(find ugv_stm32_slam)/launch/ugv_stm32_teleop.launch"/>
+
+
+  <!-- ++++++++++++++++++ RViz Configuration ++++++++++++++++++ -->
+  <node name="rviz"
+        pkg="rviz"
+        type="rviz"
+        args="-d $(find ugv_stm32_slam)/rviz/ugv_stm32_slam.rviz"
+        required="false">
+  </node> 
+
+  <!-- ++++++++++++++++++ LiDAR Configuration ++++++++++++++++++ -->
+  <node pkg="laser_filters" type="scan_to_scan_filter_chain"
+          name="laser_filter">
+        <rosparam command="load" file="$(find ugv_stm32_slam)/config/ugv_laser_filter_config.yaml" />
+        <remap from="scan" to="/lidar/scan" />
+      </node>
+
+</launch>

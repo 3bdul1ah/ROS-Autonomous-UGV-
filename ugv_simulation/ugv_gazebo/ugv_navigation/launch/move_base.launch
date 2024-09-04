@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<launch>
+    <!-- Arguments for all base local planners -->
+    <arg name="base_local_planner" default="teb_local_planner/TebLocalPlannerROS"/>
+    <!-- <arg name="base_local_planner" default="base_local_planner/TrajectoryPlannerROS"/> -->
+    <!-- <arg name="base_local_planner" default="dwa_local_planner/DWAPlannerROS"/> -->
+
+    <!-- Node for move_base -->
+    <node pkg="move_base" type="move_base" respawn="false" name="move_base" output="screen">
+        <!-- Parameter for the chosen local planner -->
+        <param name="base_local_planner" value="$(arg base_local_planner)"/>
+
+        <!-- Load ROS parameters from YAML files -->
+        <rosparam file="$(find ugv_navigation)/param/costmap_common_params.yaml" command="load" ns="global_costmap" />
+        <rosparam file="$(find ugv_navigation)/param/costmap_common_params.yaml" command="load" ns="local_costmap" />
+        <rosparam file="$(find ugv_navigation)/param/local_costmap_params.yaml" command="load" />
+        <rosparam file="$(find ugv_navigation)/param/global_costmap_params.yaml" command="load" />
+        <rosparam file="$(find ugv_navigation)/param/move_base_params.yaml" command="load" />
+
+        <!-- <rosparam file="$(find ugv_navigation)/param/base_local_planner_params.yaml" command="load" /> -->
+        <!-- <rosparam file="$(find ugv_navigation)/param/dwa_local_planner_params.yaml" command="load" /> -->
+        <rosparam file="$(find ugv_navigation)/param/teb_local_planner_params.yaml" command="load" />
+    </node>
+</launch>

@@ -1,0 +1,35 @@
+<launch>
+
+    <!-- ++++++++++++++++++ Node to serve the map ++++++++++++++++++ -->
+    <arg name="map_file" default="$(find ugv_stm32_navigation)/maps/map.yaml"/>
+    <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)" output="screen"/>
+
+    <!-- ++++++++++++++++++ Gazebo World ++++++++++++++++++ -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find ugv_gazebo)/worlds/ugv_gazebo_1.world"/>
+    </include>
+
+    <!-- ++++++++++++++++++ UGV Description ++++++++++++++++++ -->
+    <include file="$(find ugv_description)/launch/ugv_description.launch"/>
+
+    <!-- ++++++++++++++++++ RViz Configuration ++++++++++++++++++ -->
+    <node name="rviz"
+          pkg="rviz"
+          type="rviz"
+          args="-d $(find ugv_stm32_navigation)/rviz/ugv_stm32_navigation.rviz"
+          required="false">
+    </node> 
+
+    <!-- ++++++++++++++++++ Include launch files for amcl and move_base ++++++++++++++++++ -->
+    <include file="$(find ugv_stm32_navigation)/launch/amcl.launch" />
+    <include file="$(find ugv_stm32_navigation)/launch/move_base.launch" />
+    
+
+  <!-- ++++++++++++++++++ LiDAR Configuration ++++++++++++++++++ -->
+  <node pkg="laser_filters" type="scan_to_scan_filter_chain"
+          name="laser_filter">
+        <rosparam command="load" file="$(find ugv_gazebo)/config/ugv_laser_filter_config.yaml" />
+        <remap from="scan" to="/lidar/scan" />
+      </node>
+      
+</launch>

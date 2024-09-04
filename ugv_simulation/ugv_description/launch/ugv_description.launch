@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!--
+Launch file for setting up the UGV robot in ROS:
+1. Loads the robot description from a Xacro file
+2. Launches the joint state publisher GUI without the GUI
+3. Starts the robot state publisher to broadcast the robot's state
+4. Opens Rviz for visualizing the robot model and environment
+
+Written by Abdullah Al-Shateri
+
+-->
+
+<launch>
+
+  <!-- ++++++++++++++++++ Load Robot Description ++++++++++++++++++ -->
+  <arg name="model" default="$(find ugv_description)/urdf/ugv_description.xacro" />
+  <param name="robot_description" command="$(find xacro)/xacro '$(arg model)'"/>
+
+
+<!-- ++++++++++++++++++ Spawn UGV Model ++++++++++++++++++ -->
+  <node name="ugv_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
+    args="-urdf -x -0.55 -param robot_description -model ugv" />
+
+  <!-- ++++++++++++++++++ Joint State Publisher GUI ++++++++++++++++++ -->
+  <node name="joint_state_publisher" 
+        pkg="joint_state_publisher" 
+        type="joint_state_publisher" >
+    <param name="use_gui" value="false"/>
+  </node>
+  
+  <!-- ++++++++++++++++++ Robot State Publisher ++++++++++++++++++ -->
+  <node name="robot_state_publisher"
+        pkg="robot_state_publisher"
+        type="robot_state_publisher">
+  </node>
+
+  <!-- ++++++++++++++++++ Rviz Visualization ++++++++++++++++++  
+  <node name="rviz"                                       
+        pkg="rviz"                        'comment here coz we using rviz node in slam [avoiding 2 nodes with same name error]'
+        type="rviz"
+        args="-d $(find ugv_description)/rviz/ugv_description.rviz"
+        required="false">
+  </node> -->
+
+</launch>
