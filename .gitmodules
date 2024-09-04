@@ -2,3 +2,6 @@
     path = turtlebot3_simulations
     url = https://github.com/ROBOTIS-GIT/turtlebot3_simulations.git
 
+[submodule "stm32_ros_firmware/lib/FastInterruptEncoder"]
+	path = stm32_ros_firmware/lib/FastInterruptEncoder
+	url = https://github.com/levkovigor/FastInterruptEncoder.git
