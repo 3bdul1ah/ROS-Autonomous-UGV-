@@ -22,20 +22,20 @@ Written by Abdullah Al-Shateri
     args="-urdf -x -0.55 -param robot_description -model ugv" />
 
   <!-- ++++++++++++++++++ Joint State Publisher GUI ++++++++++++++++++ -->
-  <node name="joint_state_publisher" 
-        pkg="joint_state_publisher" 
+  <node name="joint_state_publisher"
+        pkg="joint_state_publisher"
         type="joint_state_publisher" >
     <param name="use_gui" value="false"/>
   </node>
-  
+
   <!-- ++++++++++++++++++ Robot State Publisher ++++++++++++++++++ -->
   <node name="robot_state_publisher"
         pkg="robot_state_publisher"
         type="robot_state_publisher">
   </node>
 
-  <!-- ++++++++++++++++++ Rviz Visualization ++++++++++++++++++  
-  <node name="rviz"                                       
+  <!-- ++++++++++++++++++ Rviz Visualization ++++++++++++++++++
+  <node name="rviz"
         pkg="rviz"                        'comment here coz we using rviz node in slam [avoiding 2 nodes with same name error]'
         type="rviz"
         args="-d $(find ugv_stm32_description)/rviz/ugv_description.rviz"

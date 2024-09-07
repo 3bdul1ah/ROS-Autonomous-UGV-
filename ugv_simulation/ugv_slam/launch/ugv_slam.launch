@@ -32,7 +32,7 @@ Written by Abdullah Al-Shateri
         type="rviz"
         args="-d $(find ugv_slam)/rviz/ugv_slam.rviz"
         required="false">
-  </node> 
+  </node>
 
   <!-- ++++++++++++++++++ LiDAR Configuration ++++++++++++++++++ -->
   <node pkg="laser_filters" type="scan_to_scan_filter_chain"

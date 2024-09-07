@@ -5,75 +5,67 @@
 
 HardwareSerial Serial1(PA3, PA2);
 
+float UGV_Linear_Velocity = 0.0;
+float UGV_Angular_Velocity = 0.0;
+float UGV_Right_Wheel_Velocity, UGV_Left_Wheel_Velocity;
 
-float Linear_Velocity = 0.0;
-float Angular_Velocity = 0.0;
-float Right_Wheel_Velocity, Left_Wheel_Velocity;
+const int UGV_MOTOR_STOP = 1500;
+const int UGV_MOTOR_MAX_FORWARD = 2200;
+const int UGV_MOTOR_MAX_BACKWARD = 800;
 
-const int MOTOR_STOP = 1500;
-const int MOTOR_MAX_FORWARD = 2200;
-const int MOTOR_MAX_BACKWARD = 800;
+ros::NodeHandle UGV_ROS_Serial;
 
-ros::NodeHandle ROS_Serial;
+geometry_msgs::Point32 UGV_Encoder_Data_Message;
+ros::Publisher UGV_Encoder_Data_Publisher("/encoder", &UGV_Encoder_Data_Message);
 
-geometry_msgs::Point32 Encoder_Data_Message;
-ros::Publisher Encoder_Data_Publisher("/encoder", &Encoder_Data_Message);
+void UGV_cmd_vel_Callback(const geometry_msgs::Twist& msg) {
+  UGV_Linear_Velocity = msg.linear.x;
+  UGV_Angular_Velocity = msg.angular.z;
 
-void cmd_vel_Callback(const geometry_msgs::Twist& msg){
-  Linear_Velocity = msg.linear.x;
-  Angular_Velocity = msg.angular.z;
+  UGV_Left_Wheel_Velocity  = (2 * UGV_Linear_Velocity - UGV_Angular_Velocity * UGV_WHEEL_BASE) /(2 * UGV_WHEEL_RADIUS);
+  UGV_Right_Wheel_Velocity = (2 * UGV_Linear_Velocity + UGV_Angular_Velocity * UGV_WHEEL_BASE) /(2 * UGV_WHEEL_RADIUS);
 
-  Left_Wheel_Velocity  = (2 * Linear_Velocity - Angular_Velocity * WHEEL_BASE) /(2 * WHEEL_RADIUS);
-  Right_Wheel_Velocity = (2 * Linear_Velocity + Angular_Velocity * WHEEL_BASE) /(2 * WHEEL_RADIUS);
-
-  if (Left_Wheel_Velocity < 0) {
-    Left_Motor.writeMicroseconds(map(abs(Left_Wheel_Velocity), 0, MAX_VELOCITY, MOTOR_MAX_BACKWARD, MOTOR_STOP));
+  if (UGV_Left_Wheel_Velocity < 0) {
+    UGV_Left_Motor.writeMicroseconds(map(abs(UGV_Left_Wheel_Velocity), 0, UGV_MAX_VELOCITY, UGV_MOTOR_MAX_BACKWARD, UGV_MOTOR_STOP));
   }
-
-  else if (Left_Wheel_Velocity > 0){
-    Left_Motor.writeMicroseconds(map(Left_Wheel_Velocity, 0, MAX_VELOCITY, MOTOR_MAX_FORWARD, MOTOR_STOP));
+  else if (UGV_Left_Wheel_Velocity > 0) {
+    UGV_Left_Motor.writeMicroseconds(map(UGV_Left_Wheel_Velocity, 0, UGV_MAX_VELOCITY, UGV_MOTOR_MAX_FORWARD, UGV_MOTOR_STOP));
   }
-
   else {
-    Left_Motor.writeMicroseconds(MOTOR_STOP);
+    UGV_Left_Motor.writeMicroseconds(UGV_MOTOR_STOP);
   }
 
-  if (Right_Wheel_Velocity < 0) {
-    Right_Motor.writeMicroseconds(map(abs(Right_Wheel_Velocity), 0, MAX_VELOCITY, MOTOR_MAX_BACKWARD, MOTOR_STOP));
+  if (UGV_Right_Wheel_Velocity < 0) {
+    UGV_Right_Motor.writeMicroseconds(map(abs(UGV_Right_Wheel_Velocity), 0, UGV_MAX_VELOCITY, UGV_MOTOR_MAX_BACKWARD, UGV_MOTOR_STOP));
   }
-
-  else if (Right_Wheel_Velocity > 0){
-    Right_Motor.writeMicroseconds(map(Right_Wheel_Velocity, 0, MAX_VELOCITY, MOTOR_MAX_FORWARD, MOTOR_STOP));
+  else if (UGV_Right_Wheel_Velocity > 0) {
+    UGV_Right_Motor.writeMicroseconds(map(UGV_Right_Wheel_Velocity, 0, UGV_MAX_VELOCITY, UGV_MOTOR_MAX_FORWARD, UGV_MOTOR_STOP));
   }
-
   else {
-    Right_Motor.writeMicroseconds(MOTOR_STOP);
+    UGV_Right_Motor.writeMicroseconds(UGV_MOTOR_STOP);
   }
-
 }
 
-ros::Subscriber<geometry_msgs::Twist> cmd_Vel_Subscriber("/cmd_vel", &cmd_vel_Callback);
+ros::Subscriber<geometry_msgs::Twist> UGV_cmd_Vel_Subscriber("/cmd_vel", &UGV_cmd_vel_Callback);
 
 void setup() {
-  initialize_Serial();
-  Configure_Motors();
-  Configure_Encoders();
+  UGV_initialize_Serial();
+  UGV_Configure_Motors();
+  UGV_Configure_Encoders();
 
-  ROS_Serial.initNode();
-  ROS_Serial.getHardware()->setBaud(BAUD_RATE);
+  UGV_ROS_Serial.initNode();
+  UGV_ROS_Serial.getHardware()->setBaud(UGV_BAUD_RATE);
 
-  ROS_Serial.advertise(Encoder_Data_Publisher);
-  ROS_Serial.subscribe(cmd_Vel_Subscriber);
-
+  UGV_ROS_Serial.advertise(UGV_Encoder_Data_Publisher);
+  UGV_ROS_Serial.subscribe(UGV_cmd_Vel_Subscriber);
 }
 
 void loop() {
+  UGV_Read_Encoders();
+  UGV_Encoder_Data_Message.x = UGV_Left_Encoder_Ticks;
+  UGV_Encoder_Data_Message.y = UGV_Right_Encoder_Ticks;
 
-  Read_Encoders();
-  Encoder_Data_Message.x = Left_Encoder_Ticks;
-  Encoder_Data_Message.y = Right_Encoder_Ticks;
+  UGV_Encoder_Data_Publisher.publish(&UGV_Encoder_Data_Message);
 
-  Encoder_Data_Publisher.publish(&Encoder_Data_Message);
-
-  ROS_Serial.spinOnce();
+  UGV_ROS_Serial.spinOnce();
 }

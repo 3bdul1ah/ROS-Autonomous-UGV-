@@ -1,54 +1,52 @@
 #include "UGV_Config.h"
 
-Servo Left_Motor;
-Servo Right_Motor;
+Servo UGV_Left_Motor;
+Servo UGV_Right_Motor;
 
-Encoder Left_Encoder(TIM2_CH1_PIN, TIM2_CH2_PIN, SINGLE, 0);
-Encoder Right_Encoder(TIM4_CH1_PIN, TIM4_CH2_PIN, SINGLE, 0);
+Encoder UGV_Left_Encoder(UGV_TIM2_CH1_PIN, UGV_TIM2_CH2_PIN, SINGLE, 0);
+Encoder UGV_Right_Encoder(UGV_TIM4_CH1_PIN, UGV_TIM4_CH2_PIN, SINGLE, 0);
 
-unsigned long Encoder_Timer = 0;
+unsigned long UGV_Encoder_Timer = 0;
 
-long Left_Encoder_Ticks = 0;
-long Right_Encoder_Ticks = 0;
+long UGV_Left_Encoder_Ticks = 0;
+long UGV_Right_Encoder_Ticks = 0;
 
-void initialize_Serial() {
-    Serial1.begin(BAUD_RATE);
+void UGV_initialize_Serial() {
+    Serial1.begin(UGV_BAUD_RATE);
     // while (!Serial1) {
     // }
     // Serial1.println("Serial1 Initialized");
 }
 
-void Configure_Motors() {
-    Left_Motor.attach(LEFT_MOTOR_PWM_PIN);
-    Right_Motor.attach(RIGHT_MOTOR_PWM_PIN);
+void UGV_Configure_Motors() {
+    UGV_Left_Motor.attach(UGV_LEFT_MOTOR_PWM_PIN);
+    UGV_Right_Motor.attach(UGV_RIGHT_MOTOR_PWM_PIN);
 }
 
-void Configure_Encoders() {
-    if (Left_Encoder.init(0)) {
+void UGV_Configure_Encoders() {
+    if (UGV_Left_Encoder.init(0)) {
         // Serial1.println("Left Encoder Initialization OK");
     } else {
         // Serial1.println("Left Encoder Initialization Failed");
     }
 
-    if (Right_Encoder.init(1)) {
+    if (UGV_Right_Encoder.init(1)) {
         // Serial1.println("Right Encoder Initialization OK");
     } else {
         // Serial1.println("Right Encoder Initialization Failed");
     }
 }
 
-void Read_Encoders() {
-    Left_Encoder.loop();
-    Right_Encoder.loop();
+void UGV_Read_Encoders() {
+    UGV_Left_Encoder.loop();
+    UGV_Right_Encoder.loop();
 
-    if (millis() - Encoder_Timer >= ENCODER_READ_DELAY) {
-        Left_Encoder_Ticks = Left_Encoder.getTicks();
-        Right_Encoder_Ticks = Right_Encoder.getTicks();
-        // Serial1.print(Left_Encoder_Ticks);
+    if (millis() - UGV_Encoder_Timer >= UGV_ENCODER_READ_DELAY) {
+        UGV_Left_Encoder_Ticks = UGV_Left_Encoder.getTicks();
+        UGV_Right_Encoder_Ticks = UGV_Right_Encoder.getTicks();
+        // Serial1.print(UGV_Left_Encoder_Ticks);
         // Serial1.print('\t');
-        // Serial1.println(Right_Encoder_Ticks);
-        Encoder_Timer = millis();
+        // Serial1.println(UGV_Right_Encoder_Ticks);
+        UGV_Encoder_Timer = millis();
     }
 }
-
-

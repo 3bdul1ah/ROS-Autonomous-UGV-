@@ -1,64 +1,50 @@
+#ifndef UGV_CONFIG_H
+#define UGV_CONFIG_H
+
 #include <Arduino.h>
 #include <Servo.h>
 #include "FastInterruptEncoder.h"
 
+#define UGV_LEFT_MOTOR_PWM_PIN        PA6
+#define UGV_RIGHT_MOTOR_PWM_PIN       PB9
 
-#define LEFT_MOTOR_PWM_PIN        PA6
-#define RIGHT_MOTOR_PWM_PIN       PB9
+#define UGV_BAUD_RATE                57600
 
-#define BAUD_RATE                57600
-/* - - - - - - - - - - - - - - - - - - - - -
- Encoder NAME(X,Y,Z,T)                      |
- > X: (CH1(TIMX)                            |
- > Y: CH2(TIMX)                             |
- > Z: TYPE: SINGLE or HALFQUAD or FULLQUAD  |
- > T: Noise and Debounce Filter: Default 0  |
- - - - - - - - - - - - - - - - - - - - - - */
+#define UGV_ENCODER_READ_DELAY   300
 
-#define ENCODER_READ_DELAY   300
+#define UGV_TIM1_CH1_PIN    PA8
+#define UGV_TIM1_CH2_PIN    PA9
 
-#define TIM1_CH1_PIN    PA8
-#define TIM1_CH2_PIN    PA9
+#define UGV_TIM2_CH1_PIN    PA0 // CHA L
+#define UGV_TIM2_CH2_PIN    PA1 // CHB L
 
-#define TIM2_CH1_PIN    PA0 // CHA L
-#define TIM2_CH2_PIN    PA1 // CHB L
+#define UGV_TIM3_CH1_PIN    PA6
+#define UGV_TIM3_CH2_PIN    PA7
 
-#define TIM3_CH1_PIN    PA6
-#define TIM3_CH2_PIN    PA7
+#define UGV_TIM4_CH1_PIN    PB6 // CHB R
+#define UGV_TIM4_CH2_PIN    PB7 // CHA R
 
-#define TIM4_CH1_PIN    PB6 // CHB R
-#define TIM4_CH2_PIN    PB7 // CHA R
+#define UGV_TIM5_CH1_PIN    PA0
+#define UGV_TIM5_CH2_PIN    PA1
 
-#define TIM5_CH1_PIN    PA0
-#define TIM5_CH2_PIN    PA1
+#define UGV_WHEEL_BASE 1.2
+#define UGV_WHEEL_RADIUS 0.257
+#define UGV_MAX_VELOCITY 0.4306073
 
-#define TIM8_CH1_PIN    PC6
-#define TIM8_CH2_PIN    PC7
+extern Servo UGV_Left_Motor;
+extern Servo UGV_Right_Motor;
 
-#define TIM9_CH1_PIN    PA2
-#define TIM9_CH2_PIN    PA3
+extern Encoder UGV_Left_Encoder;
+extern Encoder UGV_Right_Encoder;
 
-#define WHEEL_BASE 1.2
-#define WHEEL_RADIUS 0.257
-#define MAX_VELOCITY 0.4306073
+extern unsigned long UGV_Encoder_Timer;
 
-#ifndef UGV_CONFIG_H
-#define UGV_CONFIG_H
+extern long UGV_Left_Encoder_Ticks;
+extern long UGV_Right_Encoder_Ticks;
 
-extern Servo Left_Motor;
-extern Servo Right_Motor;
-
-extern Encoder Left_Encoder;
-extern Encoder Right_Encoder;
-
-extern unsigned long Encoder_Timer;
-
-extern long Left_Encoder_Ticks;
-extern long Right_Encoder_Ticks;
-
-void initialize_Serial();
-void Configure_Motors();
-void Configure_Encoders();
-void Read_Encoders();
+void UGV_initialize_Serial();
+void UGV_Configure_Motors();
+void UGV_Configure_Encoders();
+void UGV_Read_Encoders();
 
 #endif // UGV_CONFIG_H
